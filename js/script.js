@@ -62,4 +62,9 @@ $("#design").on("change", e => {
   }
 });
 
-//the "Color" field and drop down menu is updated.
+//”Register for Activities” section
+
+//When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
+//If the user selects a workshop, don't allow selection of a workshop at the same day and time
+//you should disable the checkbox and visually indicate that the workshop in the competing time slot isn't available
+//have a running total for the activity the user selects

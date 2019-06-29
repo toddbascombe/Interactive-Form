@@ -63,6 +63,72 @@ $("#design").on("change", e => {
 });
 
 //”Register for Activities” section
+const labels = $(".activities").children();
+const regexDateTime = /Workshop\s+(\W)\s+(\w+)\s+(\w.+)[,]\s+\W100/; //get index 2 for date and time and 1 for money
+
+//all other money about
+
+//main conference money amount
+
+//helper function return array of match indexs
+const matchedEvents = () => {
+  let currentLabel = [];
+  labels.each((_, item) => {
+    if (
+      $(item)
+        .text()
+        .match(regexDateTime) !== null
+    ) {
+      let change = $(item)
+        .text()
+        .match(regexDateTime)[0]
+        .replace(/\n\s+/g, " ");
+      currentLabel.push(change);
+    }
+  });
+
+  console.log(currentLabel);
+  return currentLabel;
+};
+
+console.log(labels.text());
+//eventlistener for a change in the checkbox
+$(".activities").on("change", e => {
+  let currentLabel = matchedEvents();
+  console.log(currentLabel[2]);
+  console.log(
+    $(e.target)
+      .parent()
+      .text()
+      .match(regexDateTime)[0]
+  );
+  //if the main conference is checked do not check the other events
+  if (
+    $(e.target)
+      .parent()
+      .text() === $(labels[1]).text()
+  ) {
+    console.log("200");
+  } else {
+    for (let i = 0; i < currentLabel.length; i++) {
+      if (
+        $(e.target)
+          .parent()
+          .text()
+          .match(regexDateTime)[0]
+          .replace(/\n\s+/g, " ") === currentLabel[i]
+      ) {
+        console.log("pass");
+        //this will not work due to currentlabel is just a list
+        //idea return 2 list one with the list and one with the elements
+        $(currentLabel).prop("disabled", true);
+      } else {
+        console.log("no pass");
+      }
+      $(e.target).prop("disabled", false);
+    }
+  }
+});
 
 //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
 //If the user selects a workshop, don't allow selection of a workshop at the same day and time

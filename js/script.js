@@ -67,12 +67,13 @@ const labels = $(".activities").children();
 const regexDateTime = /Workshop\s+(\W)\s+(\w+)\s+(\w.+)[,]\s+\W100/; //get index 2 for date and time and 1 for money
 
 //all other money about
-
+const regexMoney = /[$](\w+)/;
 //main conference money amount
 
 //helper function return array of match indexs
 const matchedEvents = () => {
   let currentLabel = [];
+  let elementList = [];
   labels.each((_, item) => {
     if (
       $(item)
@@ -83,54 +84,79 @@ const matchedEvents = () => {
         .text()
         .match(regexDateTime)[0]
         .replace(/\n\s+/g, " ");
+      let element = item;
       currentLabel.push(change);
+      elementList.push(element);
     }
   });
 
   console.log(currentLabel);
-  return currentLabel;
+  return {
+    textList: currentLabel,
+    labelList: elementList
+  };
 };
+let runningTotal = 0;
+//running total insert
+$(".activities").append('<div id="runningTotal"></div>');
 
 console.log(labels.text());
+
 //eventlistener for a change in the checkbox
 $(".activities").on("change", e => {
+  //running total's total
+
   let currentLabel = matchedEvents();
-  console.log(currentLabel[2]);
-  console.log(
-    $(e.target)
-      .parent()
-      .text()
-      .match(regexDateTime)[0]
-  );
+  console.log($(currentLabel.labelList[1]).children());
+  console.log(currentLabel.textList[2]);
+
   //if the main conference is checked do not check the other events
+
   if (
     $(e.target)
       .parent()
-      .text() === $(labels[1]).text()
+      .text() === $(labels[1]).text() &&
+    //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
+    e.target.checked === true
   ) {
-    console.log("200");
+    runningTotal += parseFloat(
+      $(e.target)
+        .parent()
+        .text()
+        .match(regexMoney)[1]
+    );
   } else {
-    for (let i = 0; i < currentLabel.length; i++) {
+    for (let i = 0; i < currentLabel.textList.length; i++) {
+      //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
       if (
         $(e.target)
           .parent()
           .text()
           .match(regexDateTime)[0]
-          .replace(/\n\s+/g, " ") === currentLabel[i]
+          .replace(/\n\s+/g, " ") === currentLabel.textList[i] &&
+        //you should disable the checkbox and visually indicate that the workshop in the competing time slot isn't available
+        e.target.checked === true
       ) {
-        console.log("pass");
-        //this will not work due to currentlabel is just a list
-        //idea return 2 list one with the list and one with the elements
-        $(currentLabel).prop("disabled", true);
+        //If the user selects a workshop, don't allow selection of a workshop at the same day and time
+        $(currentLabel.labelList[i])
+          .children()
+          .prop("disabled", true);
+        if ($(e.target).prop("disabled") === true) {
+          runningTotal += parseFloat(
+            $(e.target)
+              .parent()
+              .text()
+              .match(regexMoney)[1]
+          );
+        }
       } else {
         console.log("no pass");
+        $(currentLabel.labelList[i])
+          .children()
+          .prop("disabled", false);
       }
       $(e.target).prop("disabled", false);
     }
   }
+  console.log(runningTotal);
 });
-
-//When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
-//If the user selects a workshop, don't allow selection of a workshop at the same day and time
-//you should disable the checkbox and visually indicate that the workshop in the competing time slot isn't available
-//have a running total for the activity the user selects

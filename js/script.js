@@ -125,6 +125,44 @@ $(".activities").on("change", e => {
         .text()
         .match(regexMoney)[1]
     );
+  } else if ($(e.target).prop("checked") === false) {
+    if (
+      $(e.target)
+        .parent()
+        .text() === $(labels[1]).text() &&
+      //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
+      e.target.checked === false
+    ) {
+      runningTotal -= parseFloat(
+        $(e.target)
+          .parent()
+          .text()
+          .match(regexMoney)[1]
+      );
+    }
+    for (let i = 0; i < currentLabel.textList.length; i++) {
+      if (
+        $(e.target)
+          .parent()
+          .text()
+          .match(regexDateTime)[0]
+          .replace(/\n\s+/g, " ") === currentLabel.textList[i]
+      ) {
+        $(currentLabel.labelList[i])
+          .children()
+          .prop("disabled", false);
+        if ($(e.target).prop("disabled") === false) {
+          console.log(
+            parseFloat(
+              $(e.target)
+                .parent()
+                .text()
+                .match(regexMoney)[1]
+            )
+          );
+        }
+      }
+    }
   } else {
     for (let i = 0; i < currentLabel.textList.length; i++) {
       //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
@@ -151,12 +189,24 @@ $(".activities").on("change", e => {
         }
       } else {
         console.log("no pass");
-        $(currentLabel.labelList[i])
-          .children()
-          .prop("disabled", false);
       }
       $(e.target).prop("disabled", false);
     }
   }
   console.log(runningTotal);
+});
+
+//payment info sections
+$("#payment").on("change", e => {
+  if ($(e.target).val() === "credit card") {
+    $("#credit-card").show();
+  } else if ($(e.target).val() === "paypal") {
+    $("#credit-card").hide();
+    $("form").prop("action", "https://www.paypal.com/us/home");
+    $("form").prop("method", "get");
+  } else if ($(e.target).val() === "bitcoin") {
+    $("#credit-card").hide();
+    $("form").prop("action", "https://www.coinbase.com/");
+    $("form").prop("method", "get");
+  }
 });

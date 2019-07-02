@@ -20,6 +20,27 @@ $("#title").on("change", e => {
   }
 });
 
+//email vaildation
+$("#mail").on("blur", () => {
+  const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  const usr_email = $("#mail").val();
+  if (emailRegex.test(usr_email) === true && $("#mail").val() !== null) {
+    $("#mail").css("border", "#32CD32 solid 1px");
+  } else {
+    $("#mail").css("border", "#FF0000 solid 1px");
+  }
+});
+
+$("#mail").on("blur", () => {
+  const name = /^([A-Za-z] +)\s([A-Za-z]+)$/;
+  const usr_name = $("#name").val();
+  if (name.test(usr_name) === true && $("#name").val() !== null) {
+    $("#name").css("border", "#32CD32 solid 1px");
+  } else {
+    $("#name").css("border", "#FF0000 solid 1px");
+  }
+});
+
 //”T-Shirt Info” section
 $("#design").on("change", e => {
   //if "Theme - JS Puns" "Cornflower Blue," "Dark Slate Grey," and "Gold."
@@ -96,10 +117,11 @@ const matchedEvents = () => {
     labelList: elementList
   };
 };
-let runningTotal = 0;
 //running total insert
 $(".activities").append('<div id="runningTotal"></div>');
+let runningTotal = 0;
 
+$("#runningTotal").append(`<p>${runningTotal}</p>`);
 console.log(labels.text());
 
 //eventlistener for a change in the checkbox
@@ -111,7 +133,11 @@ $(".activities").on("change", e => {
   console.log(currentLabel.textList[2]);
 
   //if the main conference is checked do not check the other events
-
+  console.log(
+    $(e.target)
+      .parent()
+      .text()
+  );
   if (
     $(e.target)
       .parent()
@@ -133,14 +159,18 @@ $(".activities").on("change", e => {
       //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
       e.target.checked === false
     ) {
-      runningTotal -= parseFloat(
-        $(e.target)
-          .parent()
-          .text()
-          .match(regexMoney)[1]
-      );
+      runningTotal = runningTotal - 100;
     }
     for (let i = 0; i < currentLabel.textList.length; i++) {
+      if (
+        $(e.target)
+          .parent()
+          .text() === $(labels[1]).text() &&
+        //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
+        e.target.checked === false
+      ) {
+        break;
+      }
       if (
         $(e.target)
           .parent()
@@ -151,18 +181,9 @@ $(".activities").on("change", e => {
         $(currentLabel.labelList[i])
           .children()
           .prop("disabled", false);
-        if ($(e.target).prop("disabled") === false) {
-          console.log(
-            parseFloat(
-              $(e.target)
-                .parent()
-                .text()
-                .match(regexMoney)[1]
-            )
-          );
-        }
       }
     }
+    runningTotal = runningTotal - 100;
   } else {
     for (let i = 0; i < currentLabel.textList.length; i++) {
       //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
@@ -193,7 +214,6 @@ $(".activities").on("change", e => {
       $(e.target).prop("disabled", false);
     }
   }
-  console.log(runningTotal);
 });
 
 //payment info sections

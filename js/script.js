@@ -20,23 +20,31 @@ $("#title").on("change", e => {
   }
 });
 
-//email vaildation
+//email vaildation when field not in force
 $("#mail").on("blur", () => {
+  //regex to identify email pattern 
   const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+   //getting the email value 
   const usr_email = $("#mail").val();
+  //test the user input and if return true and not empty value, highlight the email input green
   if (emailRegex.test(usr_email) === true && $("#mail").val() !== null) {
     $("#mail").css("border", "#32CD32 solid 1px");
   } else {
+    //if not hightlight the border of the input field red
     $("#mail").css("border", "#FF0000 solid 1px");
   }
 });
-
-$("#mail").on("blur", () => {
+//name vaildation when field not in force
+$("#name").on("blur", () => {
+  //first and last name regex pattern
   const name = /^([A-Za-z] +)\s([A-Za-z]+)$/;
+  //getting the name value 
   const usr_name = $("#name").val();
+  //test the user input and if return true and not empty value, highlight the email input green
   if (name.test(usr_name) === true && $("#name").val() !== null) {
     $("#name").css("border", "#32CD32 solid 1px");
   } else {
+     //if not hightlight the border of the input field red
     $("#name").css("border", "#FF0000 solid 1px");
   }
 });
@@ -85,17 +93,21 @@ $("#design").on("change", e => {
 
 //”Register for Activities” section
 const labels = $(".activities").children();
+//regex for selectin the workshop and date of the checkbox option
 const regexDateTime = /Workshop\s+(\W)\s+(\w+)\s+(\w.+)[,]\s+\W100/; //get index 2 for date and time and 1 for money
 
-//all other money about
+//regex that select the money amount in the text 
 const regexMoney = /[$](\w+)/;
 //main conference money amount
 
-//helper function return array of match indexs
+//helper function return objects of array of matched indexs
 const matchedEvents = () => {
+  //contain the strings of each element text content
   let currentLabel = [];
+  //contain the elements of each checkbox
   let elementList = [];
   labels.each((_, item) => {
+    //check if any element is null to the regex pattern
     if (
       $(item)
         .text()
@@ -110,8 +122,6 @@ const matchedEvents = () => {
       elementList.push(element);
     }
   });
-
-  console.log(currentLabel);
   return {
     textList: currentLabel,
     labelList: elementList

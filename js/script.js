@@ -3,6 +3,9 @@ $(window).on("load", () => {
   $("#name").focus();
 });
 
+//list all error messages
+let error = [];
+
 //reveal a textarea if the other button is selected
 $("#title").on("change", e => {
   const fieldsetOne = $("#section-1");
@@ -20,36 +23,43 @@ $("#title").on("change", e => {
   }
 });
 
-//email vaildation when field not in force
+//email vaildation
 $("#mail").on("blur", () => {
-  //regex to identify email pattern 
   const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-   //getting the email value 
   const usr_email = $("#mail").val();
-  //test the user input and if return true and not empty value, highlight the email input green
   if (emailRegex.test(usr_email) === true && $("#mail").val() !== null) {
     $("#mail").css("border", "#32CD32 solid 1px");
   } else {
-    //if not hightlight the border of the input field red
     $("#mail").css("border", "#FF0000 solid 1px");
+    error.push("please enter a correct email address");
   }
 });
-//name vaildation when field not in force
+
+//name vaildation
 $("#name").on("blur", () => {
-  //first and last name regex pattern
-  const name = /^([A-Za-z] +)\s([A-Za-z]+)$/;
-  //getting the name value 
+  const name = /^([A-z]\D\w+)\s(\D\w+[a-z]|[A-Z])$/;
   const usr_name = $("#name").val();
-  //test the user input and if return true and not empty value, highlight the email input green
   if (name.test(usr_name) === true && $("#name").val() !== null) {
     $("#name").css("border", "#32CD32 solid 1px");
   } else {
-     //if not hightlight the border of the input field red
     $("#name").css("border", "#FF0000 solid 1px");
+    error.push("Please enter first and last name");
   }
 });
 
 //”T-Shirt Info” section
+const defaultOption = () => {
+  $("#color")
+    .children()
+    .each((_, item) => {
+      $(item).css("display", "none");
+    });
+  $("#color").append(
+    '<option value="default">Please select a T-shirt theme</option>'
+  );
+};
+
+defaultOption();
 $("#design").on("change", e => {
   //if "Theme - JS Puns" "Cornflower Blue," "Dark Slate Grey," and "Gold."
   if ($(e.target).val() === "js puns") {
@@ -83,31 +93,24 @@ $("#design").on("change", e => {
         }
       });
   } else {
-    $("#color")
-      .children()
-      .each((_, item) => {
-        $(item).css("display", "");
-      });
+    defaultOption();
+    error.push("Please select a design");
   }
 });
 
 //”Register for Activities” section
 const labels = $(".activities").children();
-//regex for selectin the workshop and date of the checkbox option
 const regexDateTime = /Workshop\s+(\W)\s+(\w+)\s+(\w.+)[,]\s+\W100/; //get index 2 for date and time and 1 for money
 
-//regex that select the money amount in the text 
+//all other money about
 const regexMoney = /[$](\w+)/;
 //main conference money amount
 
-//helper function return objects of array of matched indexs
+//helper function return array of match indexs
 const matchedEvents = () => {
-  //contain the strings of each element text content
   let currentLabel = [];
-  //contain the elements of each checkbox
   let elementList = [];
   labels.each((_, item) => {
-    //check if any element is null to the regex pattern
     if (
       $(item)
         .text()
@@ -122,6 +125,8 @@ const matchedEvents = () => {
       elementList.push(element);
     }
   });
+
+  // console.log(currentLabel);
   return {
     textList: currentLabel,
     labelList: elementList
@@ -130,17 +135,15 @@ const matchedEvents = () => {
 //running total insert
 $(".activities").append('<div id="runningTotal"></div>');
 let runningTotal = 0;
-
-$("#runningTotal").append(`<p>${runningTotal}</p>`);
-console.log(labels.text());
+// console.log(labels.text());
 
 //eventlistener for a change in the checkbox
 $(".activities").on("change", e => {
   //running total's total
 
   let currentLabel = matchedEvents();
-  console.log($(currentLabel.labelList[1]).children());
-  console.log(currentLabel.textList[2]);
+  // console.log($(currentLabel.labelList[1]).children());
+  // console.log(currentLabel.textList[2]);
 
   //if the main conference is checked do not check the other events
   console.log(
@@ -169,7 +172,7 @@ $(".activities").on("change", e => {
       //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
       e.target.checked === false
     ) {
-      runningTotal = runningTotal - 100;
+      console.log((runningTotal = runningTotal - 100));
     }
     for (let i = 0; i < currentLabel.textList.length; i++) {
       if (
@@ -186,6 +189,7 @@ $(".activities").on("change", e => {
           .parent()
           .text()
           .match(regexDateTime)[0]
+          //check the string for line breaks and if it is eq to any of the listed activites
           .replace(/\n\s+/g, " ") === currentLabel.textList[i]
       ) {
         $(currentLabel.labelList[i])
@@ -193,7 +197,7 @@ $(".activities").on("change", e => {
           .prop("disabled", false);
       }
     }
-    runningTotal = runningTotal - 100;
+    console.log((runningTotal = runningTotal - 100));
   } else {
     for (let i = 0; i < currentLabel.textList.length; i++) {
       //When a user unchecks an activity,the competing activities(if there are any) are no longer disabled.
@@ -211,11 +215,13 @@ $(".activities").on("change", e => {
           .children()
           .prop("disabled", true);
         if ($(e.target).prop("disabled") === true) {
-          runningTotal += parseFloat(
-            $(e.target)
-              .parent()
-              .text()
-              .match(regexMoney)[1]
+          console.log(
+            (runningTotal += parseFloat(
+              $(e.target)
+                .parent()
+                .text()
+                .match(regexMoney)[1]
+            ))
           );
         }
       } else {
@@ -224,19 +230,69 @@ $(".activities").on("change", e => {
       $(e.target).prop("disabled", false);
     }
   }
+  $("#runningTotal").text("Total Amount $" + runningTotal);
 });
 
 //payment info sections
 $("#payment").on("change", e => {
+  //if credit card is selected
   if ($(e.target).val() === "credit card") {
     $("#credit-card").show();
+    //if paypal is selected
   } else if ($(e.target).val() === "paypal") {
     $("#credit-card").hide();
-    $("form").prop("action", "https://www.paypal.com/us/home");
-    $("form").prop("method", "get");
+    //if there is error in the error list
+    if (error === null) {
+      $("form").prop("action", "https://www.paypal.com/us/home");
+      $("form").prop("method", "get");
+      //display error messages
+    } else {
+    }
+    //if bitcoin is selected
   } else if ($(e.target).val() === "bitcoin") {
     $("#credit-card").hide();
     $("form").prop("action", "https://www.coinbase.com/");
     $("form").prop("method", "get");
   }
+});
+
+//credit card vaildation
+$("#cc-num").on("blur", () => {
+  const creditCardRegex = /^((4\d{3})|(5[1-5]\d{2}))(-?|\040?)(\d{4}(-?|\040?)){3}|^(3[4,7]\d{2})(-?|\040?)\d{6}(-?|\040?)\d{5}$/;
+  const creditCard = $("#cc-num").val();
+  if (creditCardRegex.test(creditCard) === true && creditCard !== null) {
+    $("#cc-num").css("border", "#32CD32 solid 1px");
+  } else {
+    $("#cc-num").css("border", "#FF0000 solid 1px");
+    error.push("Please enter your credit card number");
+  }
+});
+
+//vaildate zipcode
+$("#zip").on("blur", () => {
+  const zipRegex = /^[0-9]{5}(?:-[0-9]{4})?$/;
+  const zipValue = $("#zip").val();
+  if (zipRegex.test(zipValue) === true && zipValue !== null) {
+    $("#zip").css("border", "#32CD32 solid 1px");
+  } else {
+    $("#zip").css("border", "#FF0000 solid 1px");
+    error.push("Please enter your zip code");
+  }
+});
+
+//vaildate cvv code
+$("#cvv").on("blur", () => {
+  const cvvRegex = /^[0-9]{3,4}$/;
+  const cvvValue = $("#cvv").val();
+  if (cvvRegex.test(cvvValue) === true && cvvValue !== null) {
+    $("#cvv").css("border", "#32CD32 solid 1px");
+  } else {
+    $("#cvv").css("border", "#FF0000 solid 1px");
+    error.push("Please enter your credit card cvv number");
+  }
+});
+
+//check for errors when click
+$("#register").on("submit", () => {
+  console.log(error);
 });

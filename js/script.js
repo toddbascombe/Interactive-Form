@@ -3,8 +3,27 @@ $(window).on("load", () => {
   $("#name").focus();
 });
 
-//list all error messages
-let error = [];
+const formValid = {
+  //email regex
+  emailRegex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+  //name regex
+  name: /^([A-z]\D\w+)\s(\D\w+[a-z]|[A-Z])$/,
+  //credit Card Regex
+  creditCardRegex: /^((4\d{3})|(5[1-5]\d{2}))(-?|\040?)(\d{4}(-?|\040?)){3}|^(3[4,7]\d{2})(-?|\040?)\d{6}(-?|\040?)\d{5}$/,
+  // zip code regex
+  zipRegex: /^[0-9]{5}(?:-[0-9]{4})?$/,
+  // cvv code regex
+  cvvRegex: /^[0-9]{3,4}$/,
+
+  //function highlight the border red for invaild input and green for valid input
+  vaildate: function(regex, elementValue, targetElement) {
+    if (regex.test(elementValue) === true && $(targetElement).val() !== null) {
+      $(targetElement).css("border", "#32CD32 solid 1px");
+    } else {
+      $(targetElement).css("border", "#FF0000 solid 1px");
+    }
+  }
+};
 
 //reveal a textarea if the other button is selected
 $("#title").on("change", e => {
@@ -24,27 +43,13 @@ $("#title").on("change", e => {
 });
 
 //email vaildation
-$("#mail").on("blur", () => {
-  const emailRegex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-  const usr_email = $("#mail").val();
-  if (emailRegex.test(usr_email) === true && $("#mail").val() !== null) {
-    $("#mail").css("border", "#32CD32 solid 1px");
-  } else {
-    $("#mail").css("border", "#FF0000 solid 1px");
-    error.push("please enter a correct email address");
-  }
+$("#mail").on("blur", e => {
+  formValid["vaildate"](formValid.emailRegex, $(e.target).val(), e.target);
 });
 
 //name vaildation
-$("#name").on("blur", () => {
-  const name = /^([A-z]\D\w+)\s(\D\w+[a-z]|[A-Z])$/;
-  const usr_name = $("#name").val();
-  if (name.test(usr_name) === true && $("#name").val() !== null) {
-    $("#name").css("border", "#32CD32 solid 1px");
-  } else {
-    $("#name").css("border", "#FF0000 solid 1px");
-    error.push("Please enter first and last name");
-  }
+$("#name").on("blur", e => {
+  formValid["vaildate"](formValid.name, $(e.target).val(), e.target);
 });
 
 //”T-Shirt Info” section
@@ -60,6 +65,7 @@ const defaultOption = () => {
 };
 
 defaultOption();
+
 $("#design").on("change", e => {
   //if "Theme - JS Puns" "Cornflower Blue," "Dark Slate Grey," and "Gold."
   if ($(e.target).val() === "js puns") {
@@ -135,16 +141,10 @@ const matchedEvents = () => {
 //running total insert
 $(".activities").append('<div id="runningTotal"></div>');
 let runningTotal = 0;
-// console.log(labels.text());
 
 //eventlistener for a change in the checkbox
 $(".activities").on("change", e => {
-  //running total's total
-
   let currentLabel = matchedEvents();
-  // console.log($(currentLabel.labelList[1]).children());
-  // console.log(currentLabel.textList[2]);
-
   //if the main conference is checked do not check the other events
   console.log(
     $(e.target)
@@ -241,58 +241,44 @@ $("#payment").on("change", e => {
     //if paypal is selected
   } else if ($(e.target).val() === "paypal") {
     $("#credit-card").hide();
-    //if there is error in the error list
-    if (error === null) {
-      $("form").prop("action", "https://www.paypal.com/us/home");
-      $("form").prop("method", "get");
-      //display error messages
-    } else {
-    }
-    //if bitcoin is selected
-  } else if ($(e.target).val() === "bitcoin") {
+  }
+  //if bitcoin is selected
+  else if ($(e.target).val() === "bitcoin") {
     $("#credit-card").hide();
-    $("form").prop("action", "https://www.coinbase.com/");
-    $("form").prop("method", "get");
   }
 });
 
 //credit card vaildation
-$("#cc-num").on("blur", () => {
-  const creditCardRegex = /^((4\d{3})|(5[1-5]\d{2}))(-?|\040?)(\d{4}(-?|\040?)){3}|^(3[4,7]\d{2})(-?|\040?)\d{6}(-?|\040?)\d{5}$/;
-  const creditCard = $("#cc-num").val();
-  if (creditCardRegex.test(creditCard) === true && creditCard !== null) {
-    $("#cc-num").css("border", "#32CD32 solid 1px");
-  } else {
-    $("#cc-num").css("border", "#FF0000 solid 1px");
-    error.push("Please enter your credit card number");
-  }
+$("#cc-num").on("blur", e => {
+  formValid["vaildate"](formValid.creditCardRegex, $(e.target).val(), e.target);
 });
 
 //vaildate zipcode
-$("#zip").on("blur", () => {
-  const zipRegex = /^[0-9]{5}(?:-[0-9]{4})?$/;
-  const zipValue = $("#zip").val();
-  if (zipRegex.test(zipValue) === true && zipValue !== null) {
-    $("#zip").css("border", "#32CD32 solid 1px");
-  } else {
-    $("#zip").css("border", "#FF0000 solid 1px");
-    error.push("Please enter your zip code");
-  }
+$("#zip").on("blur", e => {
+  formValid["vaildate"](formValid.zipRegex, $(e.target).val(), e.target);
 });
 
 //vaildate cvv code
-$("#cvv").on("blur", () => {
-  const cvvRegex = /^[0-9]{3,4}$/;
-  const cvvValue = $("#cvv").val();
-  if (cvvRegex.test(cvvValue) === true && cvvValue !== null) {
-    $("#cvv").css("border", "#32CD32 solid 1px");
-  } else {
-    $("#cvv").css("border", "#FF0000 solid 1px");
-    error.push("Please enter your credit card cvv number");
-  }
+$("#cvv").on("blur", e => {
+  formValid["vaildate"](formValid.cvvRegex, $(e.target).val(), e.target);
 });
 
-//check for errors when click
-$("#register").on("submit", () => {
-  console.log(error);
+$("#register").on("click", () => {
+  let isValid;
+  $("input").each(function() {
+    var element = $(this);
+    if (element.val() == "") {
+      isValid = false;
+      element.css("border", "#FF0000 solid 1px");
+    }
+  });
+  if (isValid) {
+    if ($("#payment").val() === "paypal") {
+      $("form").prop("action", "https://www.paypal.com/us/home");
+      $("form").prop("method", "get");
+    } else if ($("#payment").val() === "bitcoin") {
+      $("form").prop("action", "https://www.coinbase.com/");
+      $("form").prop("method", "get");
+    }
+  }
 });

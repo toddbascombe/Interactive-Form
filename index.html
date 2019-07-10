@@ -13,7 +13,7 @@
         <h1>Full Stack Conf</h1>
       </header>
 
-      <form action="index.html" method="post">
+      <form action="index.html" method="post" id="form-target">
         <fieldset id="section-1">
           <div id="errors"></div>
           <legend>Basic Info</legend>
@@ -26,9 +26,8 @@
 
           <label for="title">Job Role</label>
           <select id="title" name="user_title">
-            <option value="full-stack js developer"
-              >Full Stack JavaScript Developer</option
-            >
+            <option value="full-stack js developer">Full Stack JavaScript
+              Developer</option>
             <option value="front-end developer">Front End Developer</option>
             <option value="back-end developer">Back End Developer</option>
             <option value="designer">Designer</option>
@@ -63,53 +62,35 @@
             <label for="color">Color:</label>
             <select id="color">
               <option value="default">Select a Color</option>
-              <option value="cornflowerblue"
-                >Cornflower Blue (JS Puns shirt only)</option
-              >
-              <option value="darkslategrey"
-                >Dark Slate Grey (JS Puns shirt only)</option
-              >
+              <option value="cornflowerblue">Cornflower Blue (JS Puns shirt
+                only)</option>
+              <option value="darkslategrey">Dark Slate Grey (JS Puns shirt only)</option>
               <option value="gold">Gold (JS Puns shirt only)</option>
               <option value="tomato">Tomato (I &#9829; JS shirt only)</option>
-              <option value="steelblue"
-                >Steel Blue (I &#9829; JS shirt only)</option
-              >
-              <option value="dimgrey"
-                >Dim Grey (I &#9829; JS shirt only)</option
-              >
+              <option value="steelblue">Steel Blue (I &#9829; JS shirt only)</option>
+              <option value="dimgrey">Dim Grey (I &#9829; JS shirt only)</option>
             </select>
           </div>
         </fieldset>
 
         <fieldset class="activities">
           <legend>Register for Activities</legend>
-          <label
-            ><input type="checkbox" name="all" /> Main Conference — $200</label
-          >
-          <label
-            ><input type="checkbox" name="js-frameworks" /> JavaScript
-            Frameworks Workshop — Tuesday 9am-12pm, $100</label
-          >
-          <label
-            ><input type="checkbox" name="js-libs" /> JavaScript Libraries
-            Workshop — Tuesday 1pm-4pm, $100</label
-          >
-          <label
-            ><input type="checkbox" name="express" /> Express Workshop — Tuesday
-            9am-12pm, $100</label
-          >
-          <label
-            ><input type="checkbox" name="node" /> Node.js Workshop — Tuesday
-            1pm-4pm, $100</label
-          >
-          <label
-            ><input type="checkbox" name="build-tools" /> Build tools Workshop —
-            Wednesday 9am-12pm, $100</label
-          >
-          <label
-            ><input type="checkbox" name="npm" /> npm Workshop — Wednesday
-            1pm-4pm, $100</label
-          >
+          <label><input type="checkbox" name="all" /> Main Conference — $200</label>
+          <label><input type="checkbox" name="js-frameworks" /> JavaScript
+            Frameworks Workshop — Tuesday 9am-12pm, $100</label>
+          <label><input type="checkbox" name="js-libs" /> JavaScript Libraries
+            Workshop — Tuesday 1pm-4pm, $100</label>
+          <label><input type="checkbox" name="express" /> Express Workshop —
+            Tuesday
+            9am-12pm, $100</label>
+          <label><input type="checkbox" name="node" /> Node.js Workshop —
+            Tuesday
+            1pm-4pm, $100</label>
+          <label><input type="checkbox" name="build-tools" /> Build tools
+            Workshop —
+            Wednesday 9am-12pm, $100</label>
+          <label><input type="checkbox" name="npm" /> npm Workshop — Wednesday
+            1pm-4pm, $100</label>
         </fieldset>
         <fieldset>
           <legend>Payment Info</legend>
@@ -185,9 +166,7 @@
     </div>
     <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"
-    ></script>
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
     <script src="js/script.js"></script>
   </body>
 </html>

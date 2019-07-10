@@ -3,6 +3,8 @@ $(window).on("load", () => {
   $("#name").focus();
 });
 
+const spanError = "<span id='error'>Not valid</span>";
+
 const formValid = {
   //email regex
   emailRegex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
@@ -100,7 +102,6 @@ $("#design").on("change", e => {
       });
   } else {
     defaultOption();
-    error.push("Please select a design");
   }
 });
 
@@ -263,22 +264,40 @@ $("#cvv").on("blur", e => {
   formValid["vaildate"](formValid.cvvRegex, $(e.target).val(), e.target);
 });
 
-$("#register").on("click", () => {
-  let isValid;
-  $("input").each(function() {
-    var element = $(this);
-    if (element.val() == "") {
-      isValid = false;
-      element.css("border", "#FF0000 solid 1px");
-    }
-  });
-  if (isValid) {
-    if ($("#payment").val() === "paypal") {
-      $("form").prop("action", "https://www.paypal.com/us/home");
-      $("form").prop("method", "get");
-    } else if ($("#payment").val() === "bitcoin") {
-      $("form").prop("action", "https://www.coinbase.com/");
-      $("form").prop("method", "get");
+//event handler on the form to listen for the submit
+$("#form-target").submit(e => {
+  //loop through 12 input fields
+  for (i = 0; i < 12; i++) {
+    if ($($("input")[i]).val() === "") {
+      //display invaild when the the input is empty
+      $($("input")[i])
+        .prev()
+        .append(spanError)
+        .show();
+      $("span").fadeOut(5000);
     }
   }
+  //display invaild when the the input is at default
+  if ($("#design").val() === "Select Theme") {
+    $("#design")
+      .prev()
+      .append(spanError)
+      .show();
+    $("span").fadeOut(5000);
+  }
+  //if the running total is 0 then no event was choosen
+  if (runningTotal === 0) {
+    $(".activities")
+      .prepend(spanError)
+      .show();
+    $("span").fadeOut(5000);
+  } else {
+    //if someone choose paypal or bitcoin they will be sent to the websites
+    if ($("#payment").val() === "paypal") {
+      window.location.href = "https://www.paypal.com/us/home";
+    } else if ($("#payment").val() === "bitcoin") {
+      window.location.href = "https://www.coinbase.com/";
+    }
+  }
+  e.preventDefault();
 });

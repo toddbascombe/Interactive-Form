@@ -1,6 +1,12 @@
 //when page load focus curser on the name input
 $(window).on("load", () => {
   $("#name").focus();
+  $("#paypal").hide();
+  $("#bitcoin").hide();
+  $("#other_title").hide();
+  $("#other_title")
+    .prev()
+    .hide();
 });
 
 const spanError = "<span id='error'>Not valid</span>";
@@ -31,8 +37,10 @@ const formValid = {
 $("#title").on("change", e => {
   const fieldsetOne = $("#section-1");
   if ($(e.target).val() === "other") {
-    fieldsetOne.append("<label for='other-title'>What is your title</label>");
-    fieldsetOne.append("<textarea id='other_title'></textarea>");
+    $("#other_title").show();
+    $("#other_title")
+      .prev()
+      .show();
   } else {
     if ($(e.target).val() !== "other") {
       fieldsetOne
@@ -242,10 +250,13 @@ $("#payment").on("change", e => {
     //if paypal is selected
   } else if ($(e.target).val() === "paypal") {
     $("#credit-card").hide();
+    $("#paypal").show();
   }
   //if bitcoin is selected
   else if ($(e.target).val() === "bitcoin") {
     $("#credit-card").hide();
+    $("#paypal").hide();
+    $("#bitcoin").show();
   }
 });
 
@@ -274,30 +285,16 @@ $("#form-target").submit(e => {
         .prev()
         .append(spanError)
         .show();
-      $("span").fadeOut(5000);
     }
-  }
-  //display invaild when the the input is at default
-  if ($("#design").val() === "Select Theme") {
-    $("#design")
-      .prev()
-      .append(spanError)
-      .show();
-    $("span").fadeOut(5000);
+    e.preventDefault();
   }
   //if the running total is 0 then no event was choosen
   if (runningTotal === 0) {
     $(".activities")
       .prepend(spanError)
       .show();
-    $("span").fadeOut(5000);
+    e.preventDefault();
   } else {
-    //if someone choose paypal or bitcoin they will be sent to the websites
-    if ($("#payment").val() === "paypal") {
-      window.location.href = "https://www.paypal.com/us/home";
-    } else if ($("#payment").val() === "bitcoin") {
-      window.location.href = "https://www.coinbase.com/";
-    }
+    $("span").fadeOut();
   }
-  e.preventDefault();
 });

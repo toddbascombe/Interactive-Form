@@ -14,8 +14,6 @@ const spanError = "<span id='error'>Not valid</span>";
 const formValid = {
   //email regex
   emailRegex: /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
-  //name regex
-  name: /^([A-z]\D\w+)\s(\D\w+[a-z]|[A-Z])$/,
   //credit Card Regex
   creditCardRegex: /^((4\d{3})|(5[1-5]\d{2}))(-?|\040?)(\d{4}(-?|\040?)){3}|^(3[4,7]\d{2})(-?|\040?)\d{6}(-?|\040?)\d{5}$/,
   // zip code regex
@@ -24,12 +22,15 @@ const formValid = {
   cvvRegex: /^[0-9]{3,4}$/,
 
   //function highlight the border red for invaild input and green for valid input
-  vaildate: function(regex, elementValue, targetElement) {
-    if (regex.test(elementValue) === true && $(targetElement).val() !== null) {
-      $(targetElement).css("border", "#32CD32 solid 1px");
-    } else {
-      $(targetElement).css("border", "#FF0000 solid 1px");
-    }
+  vaildate: function(targetElement) {
+    e.preventDefault();
+    $("#mail")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#mail")
+      .prev()
+      .append(spanError)
+      .show();
   }
 };
 
@@ -51,17 +52,6 @@ $("#title").on("change", e => {
     }
   }
 });
-
-//email vaildation
-$("#mail").on("blur", e => {
-  formValid["vaildate"](formValid.emailRegex, $(e.target).val(), e.target);
-});
-
-//name vaildation
-$("#name").on("blur", e => {
-  formValid["vaildate"](formValid.name, $(e.target).val(), e.target);
-});
-
 //”T-Shirt Info” section
 const defaultOption = () => {
   $("#color")
@@ -247,10 +237,13 @@ $("#payment").on("change", e => {
   //if credit card is selected
   if ($(e.target).val() === "credit card") {
     $("#credit-card").show();
+    $("#paypal").hide();
+    $("#bitcoin").hide();
     //if paypal is selected
   } else if ($(e.target).val() === "paypal") {
     $("#credit-card").hide();
     $("#paypal").show();
+    $("#bitcoin").hide();
   }
   //if bitcoin is selected
   else if ($(e.target).val() === "bitcoin") {
@@ -260,41 +253,75 @@ $("#payment").on("change", e => {
   }
 });
 
-//credit card vaildation
-$("#cc-num").on("blur", e => {
-  formValid["vaildate"](formValid.creditCardRegex, $(e.target).val(), e.target);
-});
-
-//vaildate zipcode
-$("#zip").on("blur", e => {
-  formValid["vaildate"](formValid.zipRegex, $(e.target).val(), e.target);
-});
-
-//vaildate cvv code
-$("#cvv").on("blur", e => {
-  formValid["vaildate"](formValid.cvvRegex, $(e.target).val(), e.target);
-});
-
 //event handler on the form to listen for the submit
 $("#form-target").submit(e => {
-  //loop through 12 input fields
-  for (i = 0; i < 12; i++) {
-    if ($($("input")[i]).val() === "") {
-      //display invaild when the the input is empty
-      $($("input")[i])
-        .prev()
-        .append(spanError)
-        .show();
-    }
+  if ($("#name").val() === "") {
     e.preventDefault();
-  }
-  //if the running total is 0 then no event was choosen
-  if (runningTotal === 0) {
-    $(".activities")
-      .prepend(spanError)
+    $("#name")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#name")
+      .prev()
+      .append(spanError)
       .show();
+  }
+  if (!formValid.emailRegex.test($("#mail").val())) {
     e.preventDefault();
+    $("#mail")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#mail")
+      .prev()
+      .append(spanError)
+      .show();
+  }
+  if (runningTotal === 0) {
+    e.preventDefault();
+    $(".activities")
+      .append(spanError)
+      .show();
+  }
+  if (
+    $("#payment").val() === "credit card" &&
+    !formValid.creditCardRegex.test($("#cc-num").val())
+  ) {
+    e.preventDefault();
+    $("#cc-num")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#cc-num")
+      .prev()
+      .append(spanError)
+      .show();
+  }
+  if (
+    $("#payment").val() === "credit card" &&
+    !formValid.zipRegex.test($("#zip").val())
+  ) {
+    e.preventDefault();
+    $("#zip")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#zip")
+      .prev()
+      .append(spanError)
+      .show();
+  }
+  if (
+    $("#payment").val() === "credit card" &&
+    !formValid.cvvRegex.test($("#cvv").val())
+  ) {
+    e.preventDefault();
+    $("#cvv")
+      .css("border", "#FF0000 solid 1px")
+      .focus();
+    $("#cvv")
+      .prev()
+      .append(spanError)
+      .show();
   } else {
-    $("span").fadeOut();
+    $("span#error").remove();
   }
 });
+
+//"border", "#32CD32 solid 1px"
